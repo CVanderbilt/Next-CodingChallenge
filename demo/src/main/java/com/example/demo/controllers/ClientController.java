@@ -1,13 +1,25 @@
 package com.example.demo.controllers;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.example.demo.data.entity.ClientEntity;
+import com.example.demo.service.ClientService;
 
 @RestController
-@RequestMapping("/cajero")
+@RequestMapping("/client")
 public class ClientController {
+
+    private final ClientService clientService;
+
+    @Autowired
+    public ClientController(ClientService clientService) {
+        this.clientService = clientService;
+    }
 
     /*
      
@@ -21,7 +33,10 @@ Cambiar su código PIN. Podrá hacerlo cuantas veces quiera, pero será obligato
      */
     @GetMapping("/status")
     public String getCajeroStatus() {
-        return "Cajero is operational";
+        List<ClientEntity> clients = clientService.getAllClients();
+        return "All clients:\n" + clients.stream()
+        .map(ClientEntity::getId)
+        .collect(Collectors.joining("\n"));
     }
 
     @GetMapping("/movements")
@@ -61,9 +76,8 @@ Cambiar su código PIN. Podrá hacerlo cuantas veces quiera, pero será obligato
 
     @PostMapping("/create-account")
     public String createAccount() {
-        return "create-account";
+        ClientEntity createdClient = clientService.createClient();
+
+        return "create-account: " + createdClient.getId();
     }
-
-    // Add more methods for other endpoints as needed
-
 }
