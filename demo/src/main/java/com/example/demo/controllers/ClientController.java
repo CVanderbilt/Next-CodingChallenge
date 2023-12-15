@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/cajero")
-public class CajeroController {
+public class ClientController {
 
     /*
      
