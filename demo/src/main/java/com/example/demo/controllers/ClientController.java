@@ -50,13 +50,13 @@ Cambiar su código PIN. Podrá hacerlo cuantas veces quiera, pero será obligato
     }
 
     @PostMapping("/withdraw")
-    public String withdraw(@RequestBody String clientId, @RequestBody float amount) {
-        return "withdraw";
+    public void withdraw(@RequestBody Map<String, String> requestBody) {
+        clientService.withdraw(requestBody.get(CLIENT_ID), Float.parseFloat(requestBody.get(AMOUNT)));
     }
 
     @PostMapping("/deposit")
-    public String deposit(@RequestBody String clientId, @RequestBody float amount) {
-        return "deposit";
+    public void deposit(@RequestBody Map<String, String> requestBody) {
+        clientService.deposit(requestBody.get(CLIENT_ID), Float.parseFloat(requestBody.get(AMOUNT)));
     }
 
     @PostMapping("/transfer")

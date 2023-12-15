@@ -50,6 +50,7 @@ public class ClientService {
             }
         }
         client.setBalance(client.getBalance() - amount);
+        //client.setMovements(client.getMovements() + buildMovementString("withdraw", amount));
         clientRepository.save(client);
     }
 
@@ -59,6 +60,7 @@ public class ClientService {
             throw new RuntimeException("Client is not activated");
         }
         client.setBalance(client.getBalance() + amount);
+        //client.setMovements(client.getMovements() + buildMovementString("deposit", amount));
         clientRepository.save(client);
     }
 
