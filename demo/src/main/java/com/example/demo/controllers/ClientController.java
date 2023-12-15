@@ -1,10 +1,12 @@
 package com.example.demo.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.data.entity.ClientEntity;
@@ -15,6 +17,8 @@ import com.example.demo.service.ClientService;
 public class ClientController {
 
     private final ClientService clientService;
+    private static final String CLIENT_ID = "clientId";
+    private static final String AMOUNT = "amount";
 
     @Autowired
     public ClientController(ClientService clientService) {
@@ -35,7 +39,8 @@ Cambiar su código PIN. Podrá hacerlo cuantas veces quiera, pero será obligato
     public String getCajeroStatus() {
         List<ClientEntity> clients = clientService.getAllClients();
         return "All clients:\n" + clients.stream()
-        .map(ClientEntity::getId)
+        .map(client -> String.format("ID: %s, Balance: %f, Activated: %b, IsCredit: %b",
+                client.getId(), client.getBalance(), client.isActivated(), client.isCredit()))
         .collect(Collectors.joining("\n"));
     }
 
@@ -45,12 +50,12 @@ Cambiar su código PIN. Podrá hacerlo cuantas veces quiera, pero será obligato
     }
 
     @PostMapping("/withdraw")
-    public String withdraw() {
+    public String withdraw(@RequestBody String clientId, @RequestBody float amount) {
         return "withdraw";
     }
 
     @PostMapping("/deposit")
-    public String deposit() {
+    public String deposit(@RequestBody String clientId, @RequestBody float amount) {
         return "deposit";
     }
 
@@ -60,8 +65,8 @@ Cambiar su código PIN. Podrá hacerlo cuantas veces quiera, pero será obligato
     }
 
     @PostMapping("/activate")
-    public String activate() {
-        return "activate";
+    public void activate(@RequestBody Map<String, String> requestBody) {
+        clientService.activate(requestBody.get(CLIENT_ID));
     }
 
     @PostMapping("/change-pin")

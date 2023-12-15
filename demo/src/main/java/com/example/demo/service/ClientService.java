@@ -24,12 +24,55 @@ public class ClientService {
             false,
             false,
             "0000",
-            IBAN
+            IBAN,
+            new String[] {},
+            0
         ));
         return createdClient;
     }
 
     public List<ClientEntity> getAllClients() {
         return clientRepository.findAll();
+    }
+
+    public void withdraw(String clientId, float amount) {
+        ClientEntity client = clientRepository.findById(clientId).orElseThrow();
+        if (!client.isActivated()) {
+            throw new RuntimeException("Client is not activated");
+        }
+        if (client.isCredit()) {
+            if (client.getBalance() - amount < -client.getCreditLimit()) {
+                throw new RuntimeException("Not enough credit");
+            }
+        } else {
+            if (amount > client.getBalance()) {
+                throw new RuntimeException("Not enough balance");
+            }
+        }
+        client.setBalance(client.getBalance() - amount);
+        clientRepository.save(client);
+    }
+
+    public void deposit(String clientId, float amount) {
+        ClientEntity client = clientRepository.findById(clientId).orElseThrow();
+        if (!client.isActivated()) {
+            throw new RuntimeException("Client is not activated");
+        }
+        client.setBalance(client.getBalance() + amount);
+        clientRepository.save(client);
+    }
+
+    public void activate(String clientId) {
+        System.out.println("Activating client " + clientId);
+        ClientEntity client = clientRepository.findById(clientId).orElseThrow();
+        if (client.isActivated()) {
+            throw new RuntimeException("Client is already activated");
+        }
+        client.setActivated(true);
+        clientRepository.save(client);
+    }
+
+    private String buildMovementString(String type, float amount) {
+        return String.format("%s, %f, %s", type, amount, java.time.LocalDateTime.now().toString());
     }
 }

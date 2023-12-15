@@ -19,4 +19,6 @@ public class ClientEntity {
     private boolean requirePin;
     private String pin;
     private String iban;
+    private String[] movements; // type, amount, date. Type can be: deposit, withdraw, transfer, commission
+    private float creditLimit;
 }
